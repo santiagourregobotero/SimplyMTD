@@ -1,0 +1,72 @@
+@page "/add-application-user"
+@attribute [Authorize]
+
+<div class="row">
+    <div class="col-md-12">
+        <RadzenTemplateForm TItem="SimplyMTD.Models.ApplicationUser" Data="@user" Visible="@(user != null)" Submit="@FormSubmit">
+            <RadzenAlert Title="Cannot create user" Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">@error</RadzenAlert>
+            <div style="margin-bottom: 1rem" class="row">
+                <div class="col-md-3">
+                    <RadzenLabel Component="Email" style="width: 100%" Text="Email" />
+                </div>
+                <div class="col-md-9">
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@(user.Email)" Name="Email" />
+                    <RadzenRequiredValidator Component="Email" Text="Email is required" />
+                </div>
+            </div>
+            <div style="margin-bottom: 1rem" class="row">
+                <div class="col-md-3">
+                    <RadzenLabel Component="Email" style="width: 100%" Text="Email" />
+                </div>
+                <div class="col-md-9">
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@(user.UserName)" Name="UserName" />
+                    <RadzenRequiredValidator Component="Email" Text="Email is required" />
+                </div>
+            </div>
+            @*<div style="margin-bottom: 1rem" class="row">
+                <div class="col-md-3">
+                    <RadzenLabel Component="Address" style="width: 100%" Text="Address" />
+                </div>
+                <div class="col-md-9">
+                    <RadzenTextBox style="width: 100%" @bind-Value="@(user.Address)" Name="Address" />
+                </div>
+            </div>*@
+            <div style="margin-bottom: 1rem" class="row">
+                <div class="col-md-3">
+                    <RadzenLabel Component="RoleNames" style="width: 100%" Text="Roles" />
+                </div>
+                <div class="col-md-9">
+                    <RadzenDropDown Data="@roles" Multiple="true" style="width: 100%" TextProperty="Name"
+                        @bind-Value="@(userRoles)" ValueProperty="Id" Name="Roles" />
+                </div>
+            </div>
+            <div style="margin-bottom: 1rem" class="row">
+                <div class="col-md-3">
+                    <RadzenLabel Component="Password" style="width: 100%" Text="Password" />
+                </div>
+                <div class="col-md-9">
+                    <RadzenPassword style="display: block; width: 100%" @bind-Value="@(user.Password)"
+                        Name="Password" />
+                    <RadzenRequiredValidator Component="Password" Text="Password is required" />
+                </div>
+            </div>
+            <div style="margin-bottom: 1rem" class="row">
+                <div class="col-md-3">
+                    <RadzenLabel Component="ConfirmPassword" style="width: 100%" Text="Confirm password" />
+                </div>
+                <div class="col-md-9">
+                    <RadzenPassword style="display: block; width: 100%" @bind-Value="@(user.ConfirmPassword)"
+                        Name="ConfirmPassword" />
+                    <RadzenRequiredValidator Component="ConfirmPassword" Text="ConfirmPassword is required" />
+                    <RadzenCompareValidator Text="Passwords must match" Component="ConfirmPassword" Value="@user.Password" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col d-flex justify-content-end" style="margin-top: 1rem">
+                    <RadzenButton ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Click="@CancelClick" Variant="Variant.Flat" Style="margin-left: 0.5rem" />
+                </div>
+            </div>
+        </RadzenTemplateForm>
+    </div>
+</div>

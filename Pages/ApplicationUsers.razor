@@ -1,0 +1,28 @@
+@page "/application-users"
+@attribute [Authorize]
+
+<PageTitle>Users</PageTitle>
+<div class="row">
+    <div class="col-12 d-flex justify-content-between align-items-center" style="margin-bottom: 1rem">
+        <RadzenText Text="Users" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
+        <RadzenButton Icon="add_circle_outline" Text="Add" Click="@AddClick" Variant="Variant.Flat" />
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <RadzenAlert Size="AlertSize.Large" Shade="Shade.Light" AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Title="Cannot delete user" Visible="@errorVisible">@error</RadzenAlert>
+        <RadzenDataGrid @ref="grid0" AllowFiltering="true" AllowPaging="true" AllowSorting="true" Data="@users"
+            TItem="SimplyMTD.Models.ApplicationUser" RowSelect="@RowSelect">
+            <Columns>
+                <RadzenDataGridColumn TItem="SimplyMTD.Models.ApplicationUser" Property="UserName" Title="User Name" />
+                <RadzenDataGridColumn TItem="SimplyMTD.Models.ApplicationUser" Property="Email" Title="Email" />
+                <RadzenDataGridColumn TItem="SimplyMTD.Models.ApplicationUser" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="70px">
+                    <Template Context="user">
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small"
+                            Variant="Variant.Flat" Shade="Shade.Lighter" Click="@(() => DeleteClick(user))" @onclick:stopPropagation="true" />
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </div>
+</div>

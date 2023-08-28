@@ -1,0 +1,31 @@
+@page "/inform-client"
+
+<PageTitle>Inform Request</PageTitle>
+
+<div class="col-md-12">
+	
+	<div class="row">
+		<div class="col-md-6">
+			<RadzenCheckBoxList @bind-Value=@values TValue="int" Orientation="Radzen.Orientation.Vertical">
+				<Items>
+					<RadzenCheckBoxListItem Text="Request MTD Authorisation" Value="1" />
+					<RadzenCheckBoxListItem Text="Request Information for Next Task" Value="2" />
+					<RadzenCheckBoxListItem Text="Software Subscription Overdue Reminder" Value="3" />
+					<RadzenCheckBoxListItem Text="Custom Email" Value="4" />
+				</Items>
+			</RadzenCheckBoxList>
+		</div>	
+		<div class="col-md-6">
+
+		</div>
+	</div>
+
+
+	<div class="row">
+		<div class="col d-flex justify-content-center" style="margin-top: 1rem">
+			<RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="print" Text="Print" Style="margin-right: 0.5rem" Variant="Variant.Flat" />
+			<RadzenButton ButtonStyle="Radzen.ButtonStyle.Danger" ButtonType="ButtonType.Submit" Icon="email" Text="Email" Style="margin-right: 0.5rem" Variant="Variant.Flat" />
+		</div>
+	</div>
+</div>
+

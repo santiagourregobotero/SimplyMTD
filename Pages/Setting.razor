@@ -1,0 +1,408 @@
+@page "/profile"
+@using SimplyMTD.Models;
+@attribute [Authorize]
+<style>
+	form .row {
+		margin-bottom: 16px;
+	}
+</style>
+
+<PageTitle>Profile</PageTitle>
+<RadzenHeading Size="H1" Text="Profile" />
+
+<RadzenTabs TabPosition="@TabPosition.Left" Class="w-75 my-5 mx-auto" RenderMode="TabRenderMode.Client">
+	<Tabs>
+		<RadzenTabsItem Text="General Information">
+			<RadzenTemplateForm Data="@(userDetail)" TItem="SimplyMTD.Models.MTD.UserDetail" Visible="@(userDetail != null)" Submit="@GeneralFormSubmit">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-md-12">
+							<RadzenFieldset Text="General Information">
+								<div class="row">
+									<div class="col-md-4 align-items-center d-flex">
+										<RadzenLabel Text="Name" />
+									</div>
+									<div class="col-md-8">
+										<RadzenTextBox style="width: 100%;" Name="OwnerName" @bind-Value="@userDetail.OwnerName" />
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-4 align-items-center d-flex">
+										<RadzenLabel Text="Business Name" />
+									</div>
+									<div class="col-md-8">
+										<RadzenTextBox style="width: 100%;" Name="BusinessName" @bind-Value="@userDetail.BusinessName" />
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-4 align-items-center d-flex">
+										<RadzenLabel Text="Business Type" />
+									</div>
+									<div class="col-md-8">
+										<RadzenDropDown @bind-Value="userDetail.BusinessType" Data="@businessTypes" TextProperty="Name" ValueProperty="Id" Name="BusinessType">
+										</RadzenDropDown>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-4 align-items-center d-flex">
+										<RadzenLabel Text="VAT Registration Number" />
+									</div>
+									<div class="col-md-8">
+										<RadzenTextBox style="width: 100%;" Name="Vrn" @bind-Value="@userDetail.Vrn" />
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-4 align-items-center d-flex">
+										<RadzenLabel Text="Address" />
+									</div>
+									<div class="col-md-8">
+										<RadzenTextBox style="width: 100%;" Name="Address" @bind-Value="@userDetail.Address" />
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-4 align-items-center d-flex">
+										<RadzenLabel Text="Mobile" />
+									</div>
+									<div class="col-md-8">
+										<RadzenTextBox style="width: 100%;" Name="PhoneNumber" @bind-Value="@userDetail.PhoneNumber" />
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-4 align-items-center d-flex">
+										<RadzenLabel Text="Profile Photo" />
+									</div>
+									<div class="col-md-4">
+										<RadzenImage Path="@userDetail.Photo" Style="width: 100%;"></RadzenImage>
+									</div>
+									<div class="col-md-4">
+										<RadzenUpload @ref="upload" Auto="false" Url="upload/image" Change=@(args => OnChange(args, "Manual Upload"))
+													  Progress=@(args => OnProgress(args, "Manual Upload")) Complete=@OnComplete class="w-100" />
+										<RadzenButton Text="Upload" Click=@(args => upload.Upload()) class="d-block mt-4" />
+									</div>
+								</div>
+							</RadzenFieldset>
+						</div>
+
+					</div>
+					<div class="row justify-content-center">
+						<div class="col-md-12 d-flex align-items-end justify-content-end" style="margin-top: 16px;">
+							<RadzenButton ButtonType="ButtonType.Submit" Icon="save" Text="Save" />
+						</div>
+					</div>
+				</div>
+			</RadzenTemplateForm>
+		</RadzenTabsItem>
+		<RadzenTabsItem Text="Billing Details">
+			<RadzenTemplateForm Data="@(billing)" TItem="SimplyMTD.Models.MTD.Billing" Visible="@(billing != null)" Submit="@BillingFormSubmit">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-md-12">
+							<RadzenFieldset Text="Subscriptions">
+								<div class="row">
+									<div class="col-md-4 align-items-center d-flex">
+										<RadzenLabel Text="Basic Package" />
+									</div>
+									<div class="col-md-8 d-flex">
+										<RadzenButton Style="margin-right: 10px">Upgrade to Premium</RadzenButton>
+										<RadzenButton>Close Account</RadzenButton>
+									</div>
+								</div>
+
+							</RadzenFieldset>
+							<RadzenFieldset Text="Billing Details">
+								<div class="row">
+									<div class="col-md-4 align-items-center d-flex">
+										<RadzenLabel Text="Account Name" />
+									</div>
+									<div class="col-md-8">
+										<RadzenTextBox style="width: 100%;" Name="AccountName" @bind-Value="@billing.AccountName" />
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-4 align-items-center d-flex">
+										<RadzenLabel Text="Card Number" />
+									</div>
+									<div class="col-md-8">
+										<RadzenTextBox style="width: 100%;" Name="CardNumber" @bind-Value="@billing.CardNumber" />
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-4 align-items-center d-flex">
+										<RadzenLabel Text="Expiry Date" />
+									</div>
+									<div class="col-md-8">
+										<RadzenDatePicker Name="ExpiryDate" @bind-Value=@billing.ExpireDate DateFormat="d" Class="w-100" />
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-4 align-items-center d-flex">
+										<RadzenLabel Text="Billing Address" />
+									</div>
+									<div class="col-md-8">
+										<RadzenTextBox style="width: 100%;" Name="BillingAddress" @bind-Value="@billing.BillingAddress" />
+									</div>
+								</div>
+
+							</RadzenFieldset>
+						</div>
+					</div>
+					<div class="row justify-content-center">
+						<div class="col-md-12 d-flex align-items-end justify-content-end" style="margin-top: 16px;">
+							<RadzenButton ButtonType="ButtonType.Submit" Icon="save" Text="Save" />
+						</div>
+					</div>
+				</div>
+			</RadzenTemplateForm>
+
+		</RadzenTabsItem>
+		<RadzenTabsItem Text="Accounting Information">
+			<RadzenTemplateForm Data="@(accounting)" TItem="SimplyMTD.Models.MTD.Accounting" Visible="@(accounting != null)" Submit="@AccountingFormSubmit">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-md-12">
+							<RadzenFieldset Text="Accounting Information">
+								<div class="row">
+									<div class="col-md-4 align-items-center d-flex">
+										<RadzenLabel Text="Trade Start Date" />
+									</div>
+									<div class="col-md-8">
+										<RadzenDatePicker Name="TradeStartDate" @bind-Value=@accounting.TradeStartDate DateFormat="d" Class="w-100" />
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-4 align-items-center d-flex">
+										<RadzenLabel Text="Trade End Date" />
+									</div>
+									<div class="col-md-8">
+										<RadzenDatePicker Name="TradeEndDate" @bind-Value=@accounting.TradeEndDate DateFormat="d" Class="w-100" />
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-4 align-items-center d-flex">
+										<RadzenLabel Text="Accounting Period" />
+									</div>
+									<div class="col-md-8">
+										<div class="row">
+											<div class="col-md-6">
+												<RadzenDatePicker Name="AccountingStartDate" @bind-Value=@accounting.AccountingStartDate DateFormat="d" Class="w-100" />
+											</div>
+											<div class="col-md-6">
+												<RadzenDatePicker Name="AccountingEndDate" @bind-Value=@accounting.AccountingEndDate DateFormat="d" Class="w-100" />
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-4 align-items-center d-flex">
+										<RadzenLabel Text="Basis of Accouting" />
+									</div>
+									<div class="col-md-8">
+										<RadzenDropDown @bind-Value="accounting.Basis" Data="@basis" TextProperty="Name" ValueProperty="Id" Name="Basis">
+										</RadzenDropDown>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-4 align-items-center d-flex">
+										<RadzenLabel Text="Submission Frequency" />
+									</div>
+									<div class="col-md-8">
+										<RadzenRadioButtonList @bind-Value=@accounting.Frequency TValue="int">
+											<Items>
+												<RadzenRadioButtonListItem Text="Quarterly" Value="1" />
+												<RadzenRadioButtonListItem Text="Monthly" Value="2" />
+											</Items>
+										</RadzenRadioButtonList>
+
+									</div>
+								</div>
+							</RadzenFieldset>
+						</div>
+					</div>
+					<div class="row justify-content-center">
+						<div class="col-md-12 d-flex align-items-end justify-content-end" style="margin-top: 16px;">
+							<RadzenButton ButtonType="ButtonType.Submit" Icon="save" Text="Save" />
+						</div>
+					</div>
+				</div>
+			</RadzenTemplateForm>
+		</RadzenTabsItem>
+		<RadzenTabsItem Text="Accountant Access Deatils">
+			<RadzenTemplateForm Data="@(accountant)" TItem="SimplyMTD.Models.MTD.Accountant" Visible="@(accountant != null)" Submit="@AccountantFormSubmit">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-md-12">
+							<RadzenFieldset Text="Accountant Access Deatils">
+								<div class="row">
+									<div class="col-md-4 align-items-center d-flex">
+										<RadzenLabel Text="Access Granted" />
+									</div>
+									<div class="col-md-5">
+										<RadzenTextBox style="width: 100%;" Name="name" @bind-Value="@(Security.User.Name)" />
+									</div>
+									<div class="col-md-3">
+										<RadzenButton Style="float: right">Remove</RadzenButton>
+
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-4 align-items-center d-flex">
+										<RadzenLabel Text="Email" />
+									</div>
+									<div class="col-md-8">
+										<RadzenTextBox style="width: 100%;" Name="Email" @bind-Value="@(accountant.Email)" />
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-4 align-items-center d-flex">
+										<RadzenLabel Text="Permission" />
+									</div>
+									<div class="col-md-8">
+										<RadzenCheckBoxList @bind-Value=@values TValue="int">
+											<Items>
+												<RadzenCheckBoxListItem Text="Edit" Value="1" />
+												<RadzenCheckBoxListItem Text="Submit" Value="2" />
+												<RadzenCheckBoxListItem Text="Upload" Value="3" />
+											</Items>
+										</RadzenCheckBoxList>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12 d-flex justify-content-end">
+										<RadzenButton ButtonType="ButtonType.Submit" Style="margin-right: 10px">Invite Accountant</RadzenButton>
+										<RadzenButton>Cancel Invite</RadzenButton>
+									</div>
+								</div>
+							</RadzenFieldset>
+						</div>
+					</div>
+				</div>
+			</RadzenTemplateForm>
+		</RadzenTabsItem>
+		<RadzenTabsItem Text="Account Information">
+			
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-md-12">
+							<RadzenTemplateForm Data="@(user)" TItem="SimplyMTD.Models.ApplicationUser" Visible="@(user != null)" Submit="@ChangePasswordFormSubmit">
+							<RadzenFieldset Text="Account Information">
+								<div class="row">
+									<div class="col-md-4 align-items-center d-flex">
+										<RadzenLabel Text="Email" />
+									</div>
+									<div class="col-md-8">
+										<RadzenTextBox style="width: 100%;" Name="name" @bind-Value="@(Security.User.Name)" />
+									</div>
+								</div>
+								@*<div class="row">
+								<div class="col-md-4 align-items-center d-flex">
+								<RadzenLabel Text="Password" />
+								</div>
+								<div class="col-md-8">
+								<RadzenTextBox style="width: 100%;" Name="name" @bind-Value="@(Security.User.Name)" />
+								</div>
+								</div>*@
+								<div class="row">
+									<div class="col-md-4 align-items-center d-flex">
+										<RadzenLabel Text="Security" />
+									</div>
+									<div class="col-md-8">
+										<RadzenCheckBoxList TValue="int">
+											<Items>
+												<RadzenCheckBoxListItem Text="2-Step" Value="1" />
+												<RadzenCheckBoxListItem Text="Face" Value="2" />
+												<RadzenCheckBoxListItem Text="Fingerprint" Value="3" />
+											</Items>
+										</RadzenCheckBoxList>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-4 align-items-center d-flex">
+										<RadzenLabel Text="Notifications" />
+									</div>
+									<div class="col-md-8">
+										<RadzenCheckBoxList TValue="int">
+											<Items>
+												<RadzenCheckBoxListItem Text="Email" Value="2" />
+												<RadzenCheckBoxListItem Text="Mobile" Value="3" />
+											</Items>
+										</RadzenCheckBoxList>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col d-flex justify-content-end" style="margin-top: 1rem">
+										<RadzenButton ButtonType="ButtonType.Submit" Text="Save" Variant="Variant.Flat" />
+									</div>
+								</div>
+							</RadzenFieldset>
+							</RadzenTemplateForm>
+						</div>
+						<div class="col-md-12">
+							<RadzenFieldset Text="Change Password">
+								<div class="row">
+									<div class="col-md-12">
+										<RadzenTemplateForm Method="post" Submit="@FormSubmit" TItem="SimplyMTD.Models.ApplicationUser" Data="@user"
+															Visible="@(user != null)">
+											<RadzenAlert Size="AlertSize.Large" Shade="Shade.Light" AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Title="Cannot change password" Visible="@errorVisible">@error</RadzenAlert>
+											<RadzenAlert Size="AlertSize.Large" Shade="Shade.Light" AlertStyle="AlertStyle.Success" Variant="Variant.Flat" Visible="@successVisible">
+												Your password has been changed.
+											</RadzenAlert>
+											<div style="margin-bottom: 1rem" class="row">
+												<div class="col-md-3">
+													<RadzenLabel Component="OldPassword" style="width: 100%" Text="Old Password" />
+												</div>
+												<div class="col-md-9">
+													<RadzenPassword @bind-Value="@oldPassword" style="display: block; width: 100%"
+																	Name="OldPassword" />
+													<RadzenRequiredValidator Component="OldPassword" Text="Enter your current password" />
+												</div>
+											</div>
+											<div style="margin-bottom: 1rem" class="row">
+												<div class="col-md-3">
+													<RadzenLabel Component="NewPassword" style="width: 100%" Text="New Password" />
+												</div>
+												<div class="col-md-9">
+													<RadzenPassword @bind-Value="@newPassword" style="display: block; width: 100%"
+																	Name="NewPassword" />
+													<RadzenRequiredValidator Component="NewPassword" Text="Enter your new password" />
+												</div>
+											</div>
+											<div style="margin-bottom: 1rem" class="row">
+												<div class="col-md-3">
+													<RadzenLabel Component="ConfirmPassword" style="width: 100%" Text="Confirm password" />
+												</div>
+												<div class="col-md-9">
+													<RadzenPassword @bind-Value="@confirmPassword" style="display: block; width: 100%"
+																	Name="ConfirmPassword" />
+													<RadzenRequiredValidator Component="ConfirmPassword" Text="Confirm your new password" />
+													<RadzenCompareValidator Component="ConfirmPassword" Text="Passwords should be the same" Value="@newPassword" />
+												</div>
+											</div>
+											<div class="row">
+												<div class="col d-flex justify-content-end" style="margin-top: 1rem">
+													<RadzenButton ButtonType="ButtonType.Submit" Text="Change password" Variant="Variant.Flat" />
+												</div>
+											</div>
+										</RadzenTemplateForm>
+									</div>
+								</div>
+							</RadzenFieldset>
+						</div>
+					</div>
+					
+				</div>
+		</RadzenTabsItem>
+		<RadzenTabsItem Text="Submission Log">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-12">
+						<RadzenFieldset Text="Submission Log">
+						</RadzenFieldset>
+					</div>
+				</div>
+			</div>
+		</RadzenTabsItem>
+	</Tabs>
+</RadzenTabs>

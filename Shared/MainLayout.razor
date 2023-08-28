@@ -1,0 +1,54 @@
+@inherits LayoutComponentBase
+<RadzenDialog />
+<RadzenNotification />
+<RadzenTooltip />
+<RadzenContextMenu />
+
+<RadzenLayout>
+	<RadzenHeader>
+		<div class="row">
+			<div class="col-md-5 d-flex align-items-center">
+				<RadzenLink Path="/" Text="Go to url" target="" class="m-2" style="display: inline-flex;">
+				<div class="d-flex justify-content">
+					<RadzenImage Path="/images/logo.png" Style="width: 15%; margin-right: 10px">
+                    </RadzenImage>
+					<RadzenText Text="SimplyMTD" TextStyle="Radzen.Blazor.TextStyle.Subtitle1" style="color: var(--rz-white); margin-top: auto; margin-bottom: auto" />
+				</div>
+                </RadzenLink>
+			</div>
+			<div class="col-md-7 d-flex align-items-center justify-content-end">
+				<RadzenMenu>
+					<RadzenMenuItem Text="Dashboard" Visible="@Security.IsAuthenticated()" Path="dashboard" />
+					<RadzenMenuItem Text="Pricing Plans">
+					</RadzenMenuItem>
+					<RadzenMenuItem Text="Login" hidden="@Security.IsAuthenticated()" Path="Login">
+					</RadzenMenuItem>
+				</RadzenMenu>
+				<RadzenProfileMenu Visible="@Security.IsAuthenticated()" Click="@ProfileMenuClick">
+					<ChildContent>
+						<RadzenProfileMenuItem Path="hmrc" Icon="input" Text="Connect to HMRC" />
+						<RadzenProfileMenuItem Path="profile" Icon="settings" Text="Settings" />
+						<RadzenProfileMenuItem Path="change-password" Icon="lock_outline" Text="Change Password" />
+						<RadzenProfileMenuItem Path="application-users" Icon="person" Text="Users" />
+						<RadzenProfileMenuItem Path="application-roles" Icon="security" Text="Roles" />
+						<RadzenProfileMenuItem Text="Logout" Value="Logout" Icon="power_settings_new" />
+					</ChildContent>
+					<Template>
+						
+						@*<RadzenImage Path="@user.UserDetail.Photo" Style="height: 40px;"></RadzenImage>*@
+					</Template>
+				</RadzenProfileMenu>
+			</div>
+		</div>
+
+	</RadzenHeader>
+	<RadzenBody Expanded="@sidebarExpanded">
+		<div class="container-fluid pt-2 pt-md-3 pt-lg-4 pt-xl-5 pb-2 pb-lg-5" style="max-width: 1440px;">
+			<div class="row">
+				<div class="col">
+					@Body
+				</div>
+			</div>
+		</div>
+	</RadzenBody>
+</RadzenLayout>

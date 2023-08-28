@@ -1,0 +1,128 @@
+@page "/view-obligation"
+@using SimplyMTD.Models;
+@attribute [Authorize]
+
+<style>
+	.box-title {
+		background-color: var(--rz-success);
+		text-align: center;
+		border-right: 1px solid #000000;
+		border-bottom: 1px solid #000000;
+		border-left: 1px solid #000000;
+	}
+</style>
+<PageTitle>Obligation</PageTitle>
+<div class="container-fluid">
+	<RadzenCard Style="width: 100%; overflow: hidden;" Class="rz-shadow-0" Visible="@(obligation != null)">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="row">
+					<div class="col-md-1 p-3 box-title" style="border-top: 1px solid #000000">
+						<RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-color-white">1</RadzenText>
+					</div>
+					<div class="col-md-10 align-items-center d-flex ">
+						<RadzenLabel Text="VAT due in this period on sales and other outputs" />
+					</div>
+					<div class="col-md-1">
+						<RadzenText>@(obligation.vatDueSales.ToString())</RadzenText>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-1 p-3 box-title">
+							<RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-color-white">2</RadzenText>
+						</div>
+						<div class="col-md-10 align-items-center d-flex">
+							<RadzenLabel Text="VAT due in the period on acquisitions of goods made in Northern Ireland from EU Member States" />
+						</div>
+						<div class="col-md-1">
+							<RadzenText>@(obligation.vatDueAcquisitions.ToString())</RadzenText>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-1 p-3 box-title">
+							<RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-color-white">3</RadzenText>
+						</div>
+						<div class="col-md-10 align-items-center d-flex">
+							<RadzenLabel Text="VAT due in the period on acquisitions of goods made in Northern Ireland from EU Member States" />
+						</div>
+						<div class="col-md-1">
+							<RadzenText>@(obligation.totalVatDue.ToString())</RadzenText>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-1 p-3 box-title">
+							<RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-color-white">4</RadzenText>
+						</div>
+						<div class="col-md-10 align-items-center d-flex">
+							<RadzenLabel Text="Total VAT due (the sum of boxes 1 and 2)" />
+						</div>
+						<div class="col-md-1">
+							<RadzenText>@(obligation.vatReclaimedCurrPeriod.ToString())</RadzenText>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-1 p-3 box-title">
+							<RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-color-white">5</RadzenText>
+						</div>
+						<div class="col-md-10 align-items-center d-flex">
+							<RadzenLabel Text="VAT reclaimed in the period on purchases and other inputs (incl. acquisitions in Northern Ireland from EU Member States)" />
+						</div>
+						<div class="col-md-1">
+							<RadzenText>@(obligation.netVatDue.ToString())</RadzenText>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-1 p-3 box-title">
+							<RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-color-white">6</RadzenText>
+						</div>
+						<div class="col-md-10 align-items-center d-flex">
+							<RadzenLabel Text="Net VAT to be paid to HMRC or reclaimed by you (Difference between boxes 3 and 4)" />
+						</div>
+						<div class="col-md-1">
+							<RadzenText>@(obligation.totalValueSalesExVAT.ToString())</RadzenText>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-1 p-3 box-title">
+							<RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-color-white">7</RadzenText>
+						</div>
+						<div class="col-md-10 align-items-center d-flex">
+							<RadzenLabel Text="Total value of sales and all other outputs excluding any VAT. Include your box 8 figure" />
+						</div>
+						<div class="col-md-1">
+							<RadzenText>@(obligation.totalValuePurchasesExVAT.ToString())</RadzenText>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-1 p-3 box-title">
+							<RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-color-white">8</RadzenText>
+						</div>
+						<div class="col-md-10 align-items-center d-flex">
+							<RadzenLabel Text="Total value of purchases and all other inputs excluding any VAT. Include your box 9 figure" />
+						</div>
+						<div class="col-md-1">
+							<RadzenText>@(obligation.totalValueGoodsSuppliedExVAT.ToString())</RadzenText>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-1 p-3 box-title">
+							<RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-color-white">9</RadzenText>
+						</div>
+						<div class="col-md-10 align-items-center d-flex">
+							<RadzenLabel Text="Total value of dispatches of goods and related costs (excluding VAT) from Northern Ireland to EU Member States" />
+						</div>
+						<div class="col-md-1">
+							<RadzenText>@(obligation.totalAcquisitionsExVAT.ToString())</RadzenText>
+
+						</div>
+					</div>
+
+
+				</div>
+			</div>
+		</RadzenCard>
+
+
+	</div>
+

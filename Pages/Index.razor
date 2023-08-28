@@ -1,0 +1,250 @@
+@page "/dashboard"
+@using SimplyMTD.Models;
+@attribute [Authorize]
+
+<style>
+	button {
+		margin-left: 10px;
+	}
+</style>
+<PageTitle>Index</PageTitle>
+<div class="row pt-5 px-1">
+	<div class="col-md-6">
+		@*<RadzenText TextStyle="TextStyle.Body1"><b>@(Security.User.BusinessName)</b></RadzenText>
+		<RadzenText TextStyle="TextStyle.Body1">VAT Registration No: @(Security.User.Vrn)</RadzenText>*@
+		</div>
+		<div class="col-md-6  d-flex align-items-center justify-content-end">
+			<RadzenLabel Text="Tax Year" Style="margin-right: 10px" />
+			<RadzenDropDown @bind-Value="test.TaxYear" Placeholder="2023/24" Data="@taxYears" TextProperty="Name" ValueProperty="Id" Name="TaxYear" Style="margin-right: 30px">
+			</RadzenDropDown>
+			<RadzenButton Icon="line_weight" ButtonStyle="ButtonStyle.Primary" />
+			<RadzenButton Icon="description" ButtonStyle="ButtonStyle.Primary" />
+			<RadzenButton Icon="help" ButtonStyle="ButtonStyle.Primary" />
+			<RadzenButton Icon="build" ButtonStyle="ButtonStyle.Primary" />
+		</div>
+	</div>
+
+	<div class="row pt-5 px-1">
+
+		<div class="col-md-12">
+			<RadzenPanel>
+				<HeaderTemplate>
+					<h4 class="m-0 d-flex align-items-center">
+						<RadzenIcon Icon="list" Class="me-1" /><b>Obligations</b>
+					</h4>
+				</HeaderTemplate>
+				<ChildContent>
+					@if (obligations == null)
+				{
+					<p><em>Loading...</em></p>
+				}
+				else
+				{
+					<RadzenDataGrid @ref="grid1" Data=@obligations FilterMode="FilterMode.Simple" TItem="Obligation" Class="mt-3">
+						<Columns>
+							<RadzenDataGridColumn TItem="Obligation" Property="start" Title="Accounting Period" />
+							<RadzenDataGridColumn TItem="Obligation" Property="end" Title="" />
+							<RadzenDataGridColumn TItem="Obligation" Property="due" Title="Deadline" />
+							<RadzenDataGridColumn TItem="Obligation" Property="received" Title="Submission Date" />
+							<RadzenDataGridColumn TItem="Obligation" Property="status" Title="Status">
+								<Template Context="obligation">
+									@if (obligation.status == "O")
+									{
+										<span class="rz-color-warning-dark">Due</span>
+									}
+									else
+									{
+										<span class="rz-color-success-dark">Completed</span>
+									}
+								</Template>
+							</RadzenDataGridColumn>
+							<RadzenDataGridColumn TItem="Obligation" Title="Action">
+								<Template Context="obligation">
+									@if (obligation.status == "O")
+									{
+										<RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter" Text="Submit" Click=@(args => Submit(args, obligation.periodKey, obligation.start, obligation.end)) />
+									}
+									else
+									{
+										<RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter" Text="View" Click=@(() => OpenObligation(obligation.periodKey)) />
+									}
+
+								</Template>
+							</RadzenDataGridColumn>
+							<RadzenDataGridColumn TItem="Obligation">
+								<Template Context="obligation">
+									<RadzenCheckBox Name="@obligation.periodKey" TValue="bool" />
+								</Template>
+							</RadzenDataGridColumn>
+						</Columns>
+					</RadzenDataGrid>
+				}
+			</ChildContent>
+		</RadzenPanel>
+
+	</div>
+</div>
+<div class="row pt-5 px-1">
+	<div class="col-md-6">
+		<RadzenPanel>
+			<HeaderTemplate>
+				<h4 class="m-0 d-flex align-items-center">
+					<RadzenIcon Icon="list" Class="me-1" /><b>VAT Liabilities</b>
+				</h4>
+			</HeaderTemplate>
+			<ChildContent>
+				@if (liabilities == null)
+				{
+					<p><em>Loading...</em></p>
+				}
+				else
+				{
+					<RadzenDataGrid @ref="grid2" Data=@liabilities FilterMode="FilterMode.Simple" TItem="Liability" Class="mt-3">
+						<Columns>
+							<RadzenDataGridColumn TItem="Liability" Property="taxPeriod.from" Title="Start Date" />
+							<RadzenDataGridColumn TItem="Liability" Property="taxPeriod.to" Title="End Date" />
+							<RadzenDataGridColumn TItem="Liability" Property="due" Title="Due Date" />
+							<RadzenDataGridColumn TItem="Liability" Property="originalAmount" Title="Amount">
+								<Template Context="liability">
+									@String.Format(new System.Globalization.CultureInfo("en-GB"), "{0:C}", liability.originalAmount)
+								</Template>
+							</RadzenDataGridColumn>
+							<RadzenDataGridColumn TItem="Liability" Property="outstandingAmount" Title="Balance">
+								<Template Context="liability">
+									@String.Format(new System.Globalization.CultureInfo("en-GB"), "{0:C}", liability.outstandingAmount)
+								</Template>
+							</RadzenDataGridColumn>
+						</Columns>
+					</RadzenDataGrid>
+					<div style="float: right; margin-top: 10px;">
+						<RadzenLink Path="https://www.gov.uk/pay-vat" Text="Pay HMRC" />
+					</div>
+				}
+			</ChildContent>
+		</RadzenPanel>
+
+	</div>
+	<div class="col-md-3">
+		<RadzenPanel>
+			<HeaderTemplate>
+				<h4 class="m-0 d-flex align-items-center">
+					<RadzenIcon Icon="list" Class="me-1" /><b>Payment History</b>
+				</h4>
+			</HeaderTemplate>
+			<ChildContent>
+				@if (payments == null)
+				{
+					<p><em>Loading...</em></p>
+				}
+				else
+				{
+					<RadzenDataGrid @ref="grid3" Data=@payments FilterMode="FilterMode.Simple" TItem="Payment" Class="mt-3">
+						<Columns>
+							<RadzenDataGridColumn TItem="Payment" Property="amount" Title="Amount">
+								<Template Context="payment">
+									@String.Format(new System.Globalization.CultureInfo("en-GB"), "{0:C}", payment.amount)
+								</Template>
+							</RadzenDataGridColumn>
+							<RadzenDataGridColumn TItem="Payment" Property="received" Title="Received" />
+
+						</Columns>
+					</RadzenDataGrid>
+				}
+			</ChildContent>
+		</RadzenPanel>
+
+	</div>
+	<div class="col-md-3">
+		<RadzenChart>
+			<RadzenPieSeries Data="@revenue" Title="Revenue" CategoryProperty="Quarter" ValueProperty="Revenue">
+				<RadzenSeriesDataLabels Visible="@showDataLabels" />
+			</RadzenPieSeries>
+		</RadzenChart>
+	</div>
+</div>
+@*<div class="row pt-5 px-1">
+
+	<div class="col-md-6">
+		<RadzenPanel>
+			<HeaderTemplate>
+				<h4 class="m-0 d-flex align-items-center">
+					<RadzenIcon Icon="list" Class="me-1" /><b>VAT Liabilities</b>
+				</h4>
+			</HeaderTemplate>
+			<ChildContent>
+				@if (employees == null)
+				{
+					<p><em>Loading...</em></p>
+				}
+				else
+				{
+					<RadzenDataGrid @ref="grid" Data=@employees FilterMode="FilterMode.Simple" TItem="Employee" Class="mt-3">
+						<Columns>
+							<RadzenDataGridColumn TItem="Employee" Title="Start Date" Property="StartDate">
+							</RadzenDataGridColumn>
+							<RadzenDataGridColumn TItem="Employee" Property="EndDate" Title="End Date">
+							</RadzenDataGridColumn>
+							<RadzenDataGridColumn TItem="Employee" Property="Deadline" Title="Deadline" />
+							<RadzenDataGridColumn TItem="Employee" Property="Amount" Title="Amount" />
+							<RadzenDataGridColumn TItem="Employee" Property="Balance" Title="Balance" />
+						</Columns>
+					</RadzenDataGrid>
+				}
+			</ChildContent>
+		</RadzenPanel>
+
+	</div>
+	<div class="col-md-3">
+		<RadzenPanel>
+			<HeaderTemplate>
+				<h4 class="m-0 d-flex align-items-center">
+					<RadzenIcon Icon="list" Class="me-1" /><b>Payment History</b>
+				</h4>
+			</HeaderTemplate>
+			<ChildContent>
+				@if (employees == null)
+				{
+					<p><em>Loading...</em></p>
+				}
+				else
+				{
+					<RadzenDataGrid @ref="grid" Data=@employees FilterMode="FilterMode.Simple" TItem="Employee" Class="mt-3">
+						<Columns>
+							<RadzenDataGridColumn TItem="Employee" Title="Payment Date" Property="PaymentDate">
+							</RadzenDataGridColumn>
+							<RadzenDataGridColumn TItem="Employee" Property="PaymentReceived" Title="Received">
+							</RadzenDataGridColumn>
+						</Columns>
+					</RadzenDataGrid>
+				}
+			</ChildContent>
+		</RadzenPanel>
+
+	</div>
+	<div class="col-md-3">
+		<RadzenChart>
+			<RadzenPieSeries Data="@revenue" Title="Revenue" CategoryProperty="Quarter" ValueProperty="Revenue">
+				<RadzenSeriesDataLabels Visible="@showDataLabels" />
+			</RadzenPieSeries>
+		</RadzenChart>
+	</div>
+</div>*@
+
+@code {
+
+
+	public class Type
+	{
+		public int Id { get; set; }
+		public string Name { get; set; }
+	}
+
+
+
+	List<Type> types = new List<Type>()
+	{
+		new Type() { Id = 1, Name = "VAT" },
+		new Type() { Id = 2, Name = "ITSA" }
+	};
+
+}

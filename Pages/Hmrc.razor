@@ -1,0 +1,27 @@
+@page "/hmrc"
+
+<PageTitle>Connect To HMRC</PageTitle>
+<div class="container-fluid">
+	<div class="row d-flex px-3">
+		<div class="col-xl-5 d-flex p-3">
+			<RadzenImage Path="/images/hmrc1.png" style="width: 100%"></RadzenImage>
+		</div>
+		<div class="col-xl-7 p-5">
+			<form method="get" action="Account/UserRestrictedCall">
+				<RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2" Class="mb-4" TextAlign="Radzen.TextAlign.Center">
+					<div Class="mb-3"><span>Please authorise us to connect with HMRC</span></div>
+					<div><span>Enter Your VAT Registration Number</span></div>
+				</RadzenText>
+				<div style="margin-bottom: 1rem" class="row">
+					<RadzenTextBox style="width: 100%;" Name="Vrn" Class="mb-4" />
+					<RadzenTextBox style="width: 100%;" Name="key" Class="mb-4" Value="@Security.User.Id" hidden />
+				</div>
+				<div class="row">
+					<RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Text="AUTHORISE">
+					</RadzenButton>
+				</div>
+			</form>
+
+		</div>
+	</div>
+</div>

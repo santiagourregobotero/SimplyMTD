@@ -1,0 +1,169 @@
+@page "/excel/{periodKey}/{start}/{end}"
+@using Newtonsoft.Json;
+@using SimplyMTD.Models;
+<style>
+	form .row {
+		margin-bottom: 16px;
+	}
+</style>
+@attribute [Authorize]
+<PageTitle>Upload Excel</PageTitle>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-6 offset-6">
+			<RadzenCard Class="m-3">
+				<div class="row">
+					<div class="col-md-6">
+						<RadzenText TextStyle="TextStyle.Body1">Business Name</RadzenText>
+					</div>
+					@*<div class="col-md-6">
+						<RadzenText TextStyle="TextStyle.Body1">@(Security.User.BusinessName)</RadzenText>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<RadzenText TextStyle="TextStyle.Body1">VAT Registration Number</RadzenText>
+						</div>
+						<div class="col-md-6">
+							<RadzenText TextStyle="TextStyle.Body1">@(Security.User.Vrn)</RadzenText>
+						</div>
+					</div>*@
+					<div class="row">
+						<div class="col-md-6">
+							<RadzenText TextStyle="TextStyle.Body1">Submission Period</RadzenText>
+						</div>
+						<div class="col-md-6">
+							<RadzenText TextStyle="TextStyle.Body1">@start ~ @end</RadzenText>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<RadzenText TextStyle="TextStyle.Body1">VAT Scheme</RadzenText>
+						</div>
+						<div class="col-md-6">
+							<RadzenText TextStyle="TextStyle.Body1">Flat Rate Scheme</RadzenText>
+						</div>
+					</div>
+					</div>
+				</RadzenCard>
+		</div>
+	</div>
+	<RadzenCard class="mb-4">
+			<RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">File Upload</RadzenText>
+			<RadzenUpload @ref="upload" Auto="false" Url="upload/single" Change=@(args => OnChange(args, "Manual Upload"))
+					  Progress=@(args => OnProgress(args, "Manual Upload")) Complete=@OnComplete class="w-100" />
+			<RadzenButton Text="Upload" Click=@(args => upload.Upload()) class="d-block mt-4" />
+	</RadzenCard>
+	
+
+		<RadzenTemplateForm TItem="SimplyMTD.Models.VATReturn" Data="@vatReturn" Submit="@FormSubmit" InvalidSubmit=@OnInvalidSubmit>
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-12">
+						<RadzenFieldset Text="VAT Return">
+							<div class="row">
+								<div class="col-md-10 align-items-center d-flex">
+									<RadzenLabel Text="Box 1" />
+									<RadzenLabel Text="VAT due in this period on sales and other outputs" />
+								</div>
+								<div class="col-md-2">
+									<RadzenNumeric style="width: 100%;" Name="vatDueSales" @bind-Value="@(vatReturn.vatDueSales)" />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-10 align-items-center d-flex">
+									<RadzenLabel Text="Box 2" />
+									<RadzenLabel Text="VAT due in the period on acquisitions of goods made in Northern Ireland from EU Member States" />
+								</div>
+								<div class="col-md-2">
+									<RadzenNumeric style="width: 100%;" Name="totalVatDue" @bind-Value="@(vatReturn.vatDueAcquisitions)" />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-10 align-items-center d-flex">
+									<RadzenLabel Text="Box 3" />
+									<RadzenLabel Text="VAT due in the period on acquisitions of goods made in Northern Ireland from EU Member States" />
+								</div>
+								<div class="col-md-2">
+									<RadzenNumeric style="width: 100%;" Name="totalVatDue" @bind-Value="@(vatReturn.totalVatDue)" />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-10 align-items-center d-flex">
+									<RadzenLabel Text="Box 4" />
+									<RadzenLabel Text="Total VAT due (the sum of boxes 1 and 2)" />
+								</div>
+								<div class="col-md-2">
+									<RadzenNumeric style="width: 100%;" Name="vatReclaimedCurrPeriod" @bind-Value="@(vatReturn.vatReclaimedCurrPeriod)" />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-10 align-items-center d-flex">
+									<RadzenLabel Text="Box 5" />
+									<RadzenLabel Text="VAT reclaimed in the period on purchases and other inputs (incl. acquisitions in Northern Ireland from EU Member States)" />
+								</div>
+								<div class="col-md-2">
+									<RadzenNumeric style="width: 100%;" Name="netVatDue" @bind-Value="@(vatReturn.netVatDue)" />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-10 align-items-center d-flex">
+									<RadzenLabel Text="Box 6" />
+									<RadzenLabel Text="Net VAT to be paid to HMRC or reclaimed by you (Difference between boxes 3 and 4)" />
+								</div>
+								<div class="col-md-2">
+									<RadzenNumeric style="width: 100%;" Name="totalValueSalesExVAT" @bind-Value="@(vatReturn.totalValueSalesExVAT)" />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-10 align-items-center d-flex">
+									<RadzenLabel Text="Box 7" />
+									<RadzenLabel Text="Total value of sales and all other outputs excluding any VAT. Include your box 8 figure" />
+								</div>
+								<div class="col-md-2">
+									<RadzenNumeric style="width: 100%;" Name="totalValuePurchasesExVAT" @bind-Value="@(vatReturn.totalValuePurchasesExVAT)" />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-10 align-items-center d-flex">
+									<RadzenLabel Text="Box 8" />
+									<RadzenLabel Text="Total value of purchases and all other inputs excluding any VAT. Include your box 9 figure" />
+								</div>
+								<div class="col-md-2">
+									<RadzenNumeric style="width: 100%;" Name="totalValueGoodsSuppliedExVAT" @bind-Value="@(vatReturn.totalValueGoodsSuppliedExVAT)" />
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-md-10 align-items-center d-flex">
+									<RadzenLabel Text="Box 9" />
+									<RadzenLabel Text="Total value of dispatches of goods and related costs (excluding VAT) from Northern Ireland to EU Member States" />
+								</div>
+								<div class="col-md-2">
+									<RadzenNumeric style="width: 100%;" Name="totalAcquisitionsExVAT" @bind-Value="@(vatReturn.totalAcquisitionsExVAT)" />
+								</div>
+							</div>
+
+						</RadzenFieldset>
+						<div class="row">
+							<div class="col-md-12 d-flex align-items-center mt-3">
+								<RadzenCheckBox Name="Confirm" TValue="bool" />
+								<RadzenLabel Text="When you submit this VAT information you are making a legal declaration that the information is true and complete. A false declaration can result in prosecution." Style="margin-left: 15px; " />
+								<RadzenRequiredValidator Component="Confirm" Text="First name is required" Style="position: absolute" />
+							</div>
+							@*<RadzenNumeric style="width: 100%;" Name="FirstName" @bind-Value="@(vatReturn.totalAcquisitionsExVAT)" />
+							@*<RadzenTextBox style="display: block" Name="FirstName" @bind-Value="@(vatReturn.totalAcquisitionsExVAT.ToString())" Class="w-100" />*@
+							@*<RadzenRequiredValidator Component="FirstName"   Text="First name is required" Style="position: absolute" />*@
+						</div>
+					</div>
+				</div>
+				<div class="row justify-content-center">
+					<div class="col-md-12 d-flex align-items-end justify-content-center" style="margin-top: 16px;">
+						<RadzenButton ButtonStyle="ButtonStyle.Light" Icon="cancel" style="display: inline-block; margin-left: 10px;" Text="SAVE FOR LATER" Click="@Cancel" />
+						<RadzenButton ButtonType="ButtonType.Submit" Icon="save" Text="Submit" />
+					</div>
+				</div>
+			</div>
+		</RadzenTemplateForm>
+</div>
+		
+	
